@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disappearing Text App</title>
+</head>
+<body>
+  <h1>Write here, but be quick!</h1>
+  <p>Your text will disappear after a period of inactivity.</p>
+  <textarea id="text-area" rows="10" cols="50"></textarea>
+  <script>
+    const textArea = document.getElementById("text-area");
+    let timeoutId;
+
+    // Function to send text updates to the server
+    function updateText() {
+      const text = textArea.value;
+      fetch("/update", {
+        method: "POST",
+        body: JSON.stringify({ text }),
+      })
+      .then(response => response.text())
+      .catch(error => console.error(error));
+    }
+
+    // Update text on every key press
+    textArea.addEventListener("keypress", () => {
+      clearTimeout(timeoutId);
+      updateText();
+
+      // Reset the timer for inactivity
+      timeoutId = setTimeout(() => {
+        textArea.value = ""; // Simulate server-side deletion (replace with actual logic)
+      }, 1000); // Adjust timeout duration as needed (in milliseconds)
+    });
+  </script>
+</body>
+</html>
